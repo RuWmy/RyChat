@@ -11,8 +11,22 @@
           </template>
         </el-input>
       </el-form-item>
+        <el-form-item prop="nickname" v-if="!isLogin">
+        <el-input  size="large" clearable v-model.trim="formData.nickname" placeholder="请输入昵称">
+          <template #prefix>
+            <span class="iconfont icon-user-nick"></span>
+          </template>
+        </el-input>
+      </el-form-item>
       <el-form-item prop="password">
         <el-input show-password size="large" clearable v-model.trim="formData.password" placeholder="请输入密码">
+          <template #prefix>
+            <span class="iconfont icon-password"></span>
+          </template>
+        </el-input>
+      </el-form-item>
+           <el-form-item prop="password" v-if="!isLogin">
+        <el-input show-password size="large" clearable v-model.trim="registerPassword" placeholder="请确认密码">
           <template #prefix>
             <span class="iconfont icon-password"></span>
           </template>
@@ -26,10 +40,10 @@
         </el-input>
       </el-form-item>
        <el-form-item prop="">
-       <el-button type="primary" class="login-btn">登录</el-button>
+       <el-button type="primary" class="login-btn" @click="handleLogin">{{isLogin?"登录":"注册"}}</el-button>
       </el-form-item>
       <div class="bottom-link">
-        <span class="a-link">没有账号？</span>
+        <span class="a-link" @click="loginOrRegister">{{isLogin?"没有账号？":"已有账号？"}}</span>
       </div>
     </el-form>
 
@@ -37,10 +51,15 @@
 </div>
 </template>
 <script setup lang="ts">
-import { ref, getCurrentInstance } from 'vue';
-import { LoginRequest } from '../types';
+import { ref, getCurrentInstance, toRef } from 'vue';
+import { LoginRequest,RegisterRequest } from '../types';
 let { proxy }= getCurrentInstance()!;
-let formData = ref<LoginRequest>({email:'',password:'',checkCode:''});
+let formData = ref<RegisterRequest>({ email: '', password: '', checkCode: '', nickname: '' });
+
+function handleLogin(){
+  console.log(formData.value);
+}
+let registerPassword=ref('');
 let formDataRef = ref();
 const rules = {
   email: [
@@ -50,6 +69,14 @@ const rules = {
     { required: true, message: '请输入密码', }
   ]
 };
+const isLogin = ref(true);
+// 登录或注册
+function loginOrRegister() {
+  // 发送登录或注册消息
+  window.ipcRenderer.send('loginOrRegister', !isLogin.value);
+  // 切换登录或注册
+  isLogin.value = !isLogin.value;
+}
 </script>
 
 <style lang='scss' scoped>

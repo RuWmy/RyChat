@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, ipcMain } from "electron";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
@@ -13,6 +13,8 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 
 let win;
 const login_width = 300;
 const login_height = 370;
+const register_width = 300;
+const register_height = 490;
 function createWindow() {
   win = new BrowserWindow({
     width: login_width,
@@ -42,6 +44,15 @@ function createWindow() {
   if (NODE_ENV === "development") {
     win.webContents.openDevTools();
   }
+  ipcMain.on("loginOrRegister", (event, isLogin) => {
+    win == null ? void 0 : win.setResizable(true);
+    if (isLogin) {
+      win == null ? void 0 : win.setSize(login_width, login_height);
+    } else {
+      win == null ? void 0 : win.setSize(register_width, register_height);
+    }
+    win == null ? void 0 : win.setResizable(false);
+  });
 }
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {

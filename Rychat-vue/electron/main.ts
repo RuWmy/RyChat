@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow,ipcMain } from 'electron'
 import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
@@ -65,6 +65,16 @@ function createWindow() {
   if (NODE_ENV === 'development') {
     win.webContents.openDevTools();
   }
+  // 监听登录或注册
+  ipcMain.on('loginOrRegister', (event, isLogin) => {
+    win?.setResizable(true);
+    if(isLogin){
+      win?.setSize(login_width,login_height);
+    }else{
+      win?.setSize(register_width,register_height);
+    }
+    win?.setResizable(false);
+  })
 }
 
 // Quit when all windows are closed, except on macOS. There, it's common

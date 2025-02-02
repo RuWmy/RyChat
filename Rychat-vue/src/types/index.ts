@@ -15,10 +15,8 @@ export interface LoginRequest {
 }
 
 // 注册请求类型
-export interface RegisterRequest {
-  username: string
-  email: string
-  password: string
+export interface RegisterRequest extends LoginRequest {
+  nickname: string
 }
 
 // 登录响应类型
