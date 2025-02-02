@@ -3,6 +3,7 @@ import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 
+const NODE_ENV = process.env.NODE_ENV;
 const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -26,9 +27,25 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 
 
 let win: BrowserWindow | null
 
+const login_width = 300;
+const login_height = 370;
+const register_width = 300;
+const register_height = 490;
+
 function createWindow() {
   win = new BrowserWindow({
+    width: login_width,
+    height: login_height,
+    show: true,
     icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
+    autoHideMenuBar: true,
+    titleBarStyle: 'hidden',
+    // 是否可以拖动
+    resizable: false,
+    // 是否显示边框
+    frame: true,
+    // 是否透明
+    transparent: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.mjs'),
     },
@@ -44,6 +61,9 @@ function createWindow() {
   } else {
     // win.loadFile('dist/index.html')
     win.loadFile(path.join(RENDERER_DIST, 'index.html'))
+  }
+  if (NODE_ENV === 'development') {
+    win.webContents.openDevTools();
   }
 }
 
